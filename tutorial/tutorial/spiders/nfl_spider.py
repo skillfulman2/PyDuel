@@ -7,17 +7,16 @@ class NFLSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
-        for player in response.xpath('//div[@id="div_players"]'): 
+        for player in response.xpath('//div[@id="div_players"]//p'): 
             yield {
-                'player': player.xpath('//p//a::text').get(),
-#                'author': quote.xpath('small.author::text').get(),
-#                'tags': quote.xpath('div.tags a.tag::text').getall(),
+                'name': player.css('a::text').get(),
+                'position': player.xpath('//p/text()').get() #.re_first('\([^)]+\)'),
             }
 
 
-#        next_page = response.css('li.next a::attr(href)').get()
-#        if next_page is not None:
-#            next_page = response.urljoin(next_page)
-#            yield scrapy.Request(next_page, callback=self.parse)
+        next_page = response.css('li.next a::attr(href)').get()
+        if next_page is not None:
+            next_page = response.urljoin(next_page)
+            yield scrapy.Request(next_page, callback=self.parse)
 
 
